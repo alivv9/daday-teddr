@@ -31,10 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const totalWithCommDetail = document.getElementById("total-with-comm-detail");
   const resultSection = document.getElementById("result-section");
 
-  // Form Elements
-  const orderForm = document.getElementById("order-form");
-  const formCurrencySelect = document.getElementById("order-currency");
-  const formAmountInput = document.getElementById("order-amount");
+
 
   // --- Theme Toggle Action ---
   const currentTheme = localStorage.getItem("theme");
@@ -125,104 +122,10 @@ document.addEventListener("DOMContentLoaded", () => {
     calculateConversion();
   });
 
-  // Sync converter to Order Form
-  // When currency is selected in form, also set it in converter
-  formCurrencySelect.addEventListener("change", (e) => {
-    toCurrency.value = e.target.value;
-    fromCurrency.value = "LYD";
-    calculateConversion();
-  });
 
-  formAmountInput.addEventListener("input", (e) => {
-    convertAmount.value = e.target.value;
-    calculateConversion();
-  });
 
   // Initialize conversion display
   calculateConversion();
 
-  // --- Order Form Handling ---
-  orderForm.addEventListener("submit", (e) => {
-    e.preventDefault();
 
-    const name = document.getElementById("order-name").value.trim();
-    const phone = document.getElementById("order-phone").value.trim();
-    const amount = document.getElementById("order-amount").value.trim();
-    const currency = document.getElementById("order-currency").value;
-
-    if (!name || !phone || !amount || !currency) {
-      alert("الرجاء ملء جميع الحقول المطلوبة.");
-      return;
-    }
-
-    // Simulate submission loading states
-    const submitBtn = orderForm.querySelector("button[type='submit']");
-    const originalText = submitBtn.textContent;
-    submitBtn.disabled = true;
-    submitBtn.textContent = "جاري إرسال طلبك...";
-
-    setTimeout(() => {
-      // Re-enable
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalText;
-
-      // Show success overlay or dialog
-      showOrderSuccess(name, phone, amount, currency);
-      orderForm.reset();
-      calculateConversion();
-    }, 1500);
-  });
-
-  function showOrderSuccess(name, phone, amount, currency) {
-    const currencyName = currencyRates[currency]?.name || currency;
-    
-    // Create success alert element dynamically
-    const alertDiv = document.createElement("div");
-    alertDiv.style.position = "fixed";
-    alertDiv.style.top = "0";
-    alertDiv.style.left = "0";
-    alertDiv.style.width = "100%";
-    alertDiv.style.height = "100%";
-    alertDiv.style.backgroundColor = "rgba(0,0,0,0.6)";
-    alertDiv.style.backdropFilter = "blur(8px)";
-    alertDiv.style.display = "flex";
-    alertDiv.style.alignItems = "center";
-    alertDiv.style.justifyContent = "center";
-    alertDiv.style.zIndex = "3000";
-    alertDiv.style.opacity = "0";
-    alertDiv.style.transition = "opacity 0.3s ease";
-    
-    alertDiv.innerHTML = `
-      <div class="panel" style="max-width: 450px; width: 90%; text-align: center; border-radius: var(--radius-lg); transform: scale(0.9); transition: transform 0.3s ease; direction: rtl;">
-        <div class="feature-icon-wrapper" style="background-color: var(--color-primary-glow); color: var(--color-primary); width: 64px; height: 64px; margin-bottom: 20px;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width: 28px; height: 28px;">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </div>
-        <h3 style="font-size: 1.6rem; margin-bottom: 12px; font-weight: 800;">تم إرسال طلبك بنجاح!</h3>
-        <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 0.95rem; line-height: 1.5;">
-          عزيزنا <strong>${name}</strong>، لقد تلقينا طلب صرف بمبلغ <strong>${amount} ${currencyName}</strong>. 
-          سيقوم موظف خدمة العملاء بصرافة وادي الكوف بالتواصل معك قريباً على الرقم <strong>${phone}</strong> لتأكيد عمليتك واستلام المبلغ من فرعنا بالمرج.
-        </p>
-        <button id="close-alert-btn" class="btn btn-primary" style="width: 100%;">حسناً، شكراً لك</button>
-      </div>
-    `;
-
-    document.body.appendChild(alertDiv);
-    
-    // Trigger animations
-    setTimeout(() => {
-      alertDiv.style.opacity = "1";
-      alertDiv.querySelector(".panel").style.transform = "scale(1)";
-    }, 50);
-
-    const closeBtn = alertDiv.querySelector("#close-alert-btn");
-    closeBtn.addEventListener("click", () => {
-      alertDiv.style.opacity = "0";
-      alertDiv.querySelector(".panel").style.transform = "scale(0.9)";
-      setTimeout(() => {
-        alertDiv.remove();
-      }, 300);
-    });
-  }
 });
